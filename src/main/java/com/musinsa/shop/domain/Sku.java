@@ -1,11 +1,9 @@
-package com.musinsa.shop.dto;
+package com.musinsa.shop.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 
 /**
@@ -14,6 +12,9 @@ import java.util.UUID;
  */
 @Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 // 조회 성능 향상을 위해 price 컬럼에 인덱스를 생성
 @Table(indexes = {
         @Index(columnList = "price")

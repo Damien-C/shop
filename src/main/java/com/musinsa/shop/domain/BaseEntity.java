@@ -1,4 +1,4 @@
-package com.musinsa.shop.dto;
+package com.musinsa.shop.domain;
 
 
 import jakarta.persistence.*;
@@ -21,8 +21,12 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID) // Hibernate 6.2 이상부터 GenericGenerator 에서 strategy 값에 String 사용을 권장하지 않음.
     private String id;
 
+    @Column(nullable = false, insertable = false, updatable = false,
+            columnDefinition = "datetime default CURRENT_TIMESTAMP")
     @CreatedDate
     private LocalDateTime createDate; // 데이터 생성 일자를 기록.
+    @Column(nullable = false, insertable = false, updatable = false,
+            columnDefinition = "datetime default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP")
     @LastModifiedDate
     private LocalDateTime updateDate; // 데이터 마지막 변조 일자 기록.
 }
