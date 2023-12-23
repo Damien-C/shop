@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+<th:block layout:fragment="content">
+    <link href="/static/css/main.css" rel="stylesheet"/>
+    <div class="main_wrap">
+        <button id="btn_all">전체 아이템</button>
+        <button id="btn_1">카테고리별 최저가</button>
+        <button id="btn_2">최저가 브랜드</button>
+
+        <label for="slt_1">카테고리별 최저/최고가 브랜드</label><select id="slt_1" class="slt_1">
+            <th:block th:each="item,i : ${categoryList}">
+                <option th:value="${item.id}" th:text="${item.name}"></option>
+            </th:block>
+        </select>
+
+        <button id="btn_admin">관리자</button>
+    </div>
+</th:block>
+</html>
