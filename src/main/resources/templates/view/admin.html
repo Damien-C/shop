@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index}">
+<th:block layout:fragment="content">
+    <link href="/static/css/admin.css" rel="stylesheet"/>
+    <div class="top_wrap">
+        <div>
+            <button id="brand" onclick="window.location='/admin?pageType=brand'">브랜드 관리</button>
+            <button id="category" onclick="window.location='/admin?pageType=category'">카테고리 관리</button>
+            <button id="sku_item" onclick="window.location='/admin?pageType=skuItem'">상품 관리</button>
+        </div>
+
+
+    </div>
+    <div id="content" class="content_wrap">
+        <div class="instruction">
+            관리자 페이지 입니다.
+        </div>
+
+        <th:block th:switch="${queryString}">
+            <div th:case="|pageType=brand|" th:insert="component/brand.html::brand"></div>
+            <div th:case="|pageType=category|" th:insert="component/category.html::category"></div>
+            <div th:case="|pageType=skuItem|" th:insert="component/skuItem.html::skuItem"></div>
+        </th:block>
+    </div>
+
+
+    <script>
+
+    </script>
+</th:block>
+</html>

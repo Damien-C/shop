@@ -1,0 +1,276 @@
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-secutiry">
+<th:block th:fragment="skuItem">
+    <div id="select_wrap" class="select_wrap">
+        <select id="slt_brand" class="slt_brand">
+            <option value="default">브랜드</option>
+            <th:block th:each="item,i : ${brandList}">
+                <option th:value="${item.name}" th:text="${item.name}"></option>
+            </th:block>
+        </select>
+        <select id="slt_category" class="slt_category">
+            <option value="default">카테고리</option>
+            <th:block th:each="item,i : ${categoryList}">
+                <option th:value="${item.name}" th:text="${item.name}"></option>
+            </th:block>
+        </select>
+        <input id="num_price" class="num_price" type="number" placeholder="가격"/>
+        <button id="addSkuItem" onclick="addSkuItem()" class="big_button">추가하기</button>
+    </div>
+
+    <ul id="item_list">
+
+    </ul>
+    <script>
+
+        function addSkuItem(){
+            const brand = $('#slt_brand option:selected').val()
+            const category = $('#slt_category option:selected').val()
+            const price = $('#num_price').val()
+
+            const payload = {
+                'brandName': brand,
+                'categoryName': category,
+                'price': price
+            }
+
+            $.ajax({
+                url: '/admin/api/item',
+                type: 'post',
+                datatype: 'json',
+                data: JSON.stringify(payload),
+                contentType: 'application/json; charset=utf-8',
+                beforeSend: function(){
+                    $('.loading_box').addClass('on');
+                },
+                complete: function(){
+                    $('.loading_box').removeClass('on');
+
+                },
+                success: function(res){
+                    if(res.success){
+                        alert('저장 성공')
+                        const newItemElement = createItemElement(res.data.id, brand, category, price)
+                        $('#item_list').prepend(newItemElement)
+                    }
+                    else{
+                        alert(res.message)
+                    }
+                },
+                error: function(err){
+                    alert(err.responseJSON.message)
+                }
+            })
+
+        }
+
+        function saveSkuItem(id){
+            const targetLow = $('#li_'+id)
+            const brand = targetLow.find('[data-field="brand"] option:selected').val()
+            const category = targetLow.find('[data-field="category"] option:selected').val()
+            const price = targetLow.find('[data-field="price"]').val()
+
+            const payload = {
+                'id': id,
+                'brandName': brand,
+                'categoryName': category,
+                'price': price
+            }
+            $.ajax({
+                url: '/admin/api/item',
+                type: 'put',
+                datatype: 'json',
+                data: JSON.stringify(payload),
+                contentType: 'application/json; charset=utf-8',
+                beforeSend: function(){
+                    $('.loading_box').addClass('on');
+                },
+                complete: function(){
+                    $('.loading_box').removeClass('on');
+
+                },
+                success: function(res){
+                    if(res.success){
+                        alert('저장 성공')
+                        disableSkuItemFields(id, brand, category, price)
+                    }
+                    else{
+                        alert(res.message)
+                    }
+                },
+                error: function(err){
+                    alert(err.responseJSON.message)
+                }
+            })
+        }
+
+        function disableSkuItemFields(id, prevBrand, prevCategory, prevPrice){
+            const targetLow = $('#li_'+id)
+
+            // 삭제버튼
+            const deleteButton = document.createElement('button')
+            deleteButton.onclick = () => deleteSkuItem(id)
+            deleteButton.innerText = '삭제'
+
+            // 수정버튼
+            const editButton = document.createElement('button')
+            editButton.onclick = () => enableSkuItemFields(id)
+            editButton.innerText = '수정'
+
+            // price
+            const priceElement = document.createElement('span')
+            priceElement.setAttribute('data-field', 'price')
+            priceElement.innerText = prevPrice
+
+            // category
+            const categoryElement = document.createElement('span')
+            categoryElement.setAttribute('data-field', 'category')
+            categoryElement.innerText = prevCategory
+
+            // brand
+            const brandElement = document.createElement('span')
+            brandElement.setAttribute('data-field', 'brand')
+            brandElement.innerText = prevBrand
+
+            targetLow.empty()
+            targetLow.prepend($(deleteButton))
+            targetLow.prepend($(editButton))
+            targetLow.prepend($(priceElement))
+            targetLow.prepend($(categoryElement))
+            targetLow.prepend($(brandElement))
+
+        }
+
+        function enableSkuItemFields(id){
+            const targetLow = $('#li_'+id)
+            const priceValue = targetLow.find('[data-field="price"]').html()
+            const categoryName = targetLow.find('[data-field="category"]').html()
+            const brandName = targetLow.find('[data-field="brand"]').html()
+
+            // 취소버튼
+            const cancelButton = document.createElement('button')
+            cancelButton.onclick = () => disableSkuItemFields(id, brandName, categoryName, priceValue)
+            cancelButton.innerText = '취소'
+
+            // 저장버튼
+            const saveButton = document.createElement('button')
+            saveButton.onclick = () => saveSkuItem(id)
+            saveButton.innerText = '저장'
+
+            // price
+            const priceElement = document.createElement('input')
+            priceElement.setAttribute('data-field', 'price')
+            priceElement.type = 'number'
+            priceElement.value = priceValue
+
+            // category
+            const categoryList = $('#slt_category').children().clone()
+            const categoryElement = document.createElement('select')
+            categoryElement.setAttribute('data-field', 'category')
+            $(categoryElement).append(categoryList)
+            $(categoryElement).val(categoryName).prop('selected', true)
+
+            // brand
+            const brandList = $('#slt_brand').children().clone()
+            const brandElement = document.createElement('select')
+            brandElement.setAttribute('data-field', 'brand')
+            $(brandElement).append(brandList)
+            $(brandElement).val(brandName).prop('selected', true)
+
+            targetLow.html('')
+
+            targetLow.prepend(cancelButton)
+            targetLow.prepend(saveButton)
+            targetLow.prepend(priceElement)
+            targetLow.prepend(categoryElement)
+            targetLow.prepend(brandElement)
+
+        }
+        function deleteSkuItem(id){
+            if(confirm('상품을 삭제 하시겠습니까?')){
+                const targetLow = $('#li_'+id)
+
+                const payload = {
+                    'id': id
+                }
+                $.ajax({
+                    url: '/admin/api/item',
+                    type: 'delete',
+                    datatype: 'json',
+                    data: JSON.stringify(payload),
+                    contentType: 'application/json; charset=utf-8',
+                    beforeSend: function(){
+                        $('.loading_box').addClass('on');
+                    },
+                    complete: function(){
+                        $('.loading_box').removeClass('on');
+
+                    },
+                    success: function(res){
+                        if(res.success){
+                            alert('삭제 성공')
+                            targetLow.remove()
+                        }
+                        else{
+                            alert(res.message)
+                        }
+                    },
+                    error: function(err){
+                        alert(err.responseJSON.message)
+                    }
+                })
+            }
+        }
+
+
+        function drawAllItemList(data){
+            let content = ''
+            data.forEach((e) => {
+                content += createItemElement(e.id, e.brand, e.category, e.price)
+            })
+            $('#item_list').html(content)
+            $('#select_name').html('')
+            $('#total_price').html('')
+        }
+
+        function createItemElement(id, brand, category, price){
+            return `
+                    <li id="li_${id}">
+                        <span data-field="brand">${brand}</span>
+                        <span data-field="category">${category}</span>
+                        <span data-field="price">${price}</span>
+                        <button onclick="enableSkuItemFields('${id}')">수정</button>
+                        <button onclick="deleteSkuItem('${id}')">삭제</button>
+                    </li>
+                `
+        }
+
+
+        $(document).ready(function(){
+            $.ajax({
+                url: '/api/allItems',
+                type: 'get',
+                datatype: 'json',
+                contentType: 'application/json; charset=utf-8',
+                beforeSend: function(){
+                    $('.loading_box').addClass('on');
+                },
+                complete: function(){
+                    $('.loading_box').removeClass('on');
+
+                },
+                success: function(res){
+                    if(res.data){
+                        drawAllItemList(res.data)
+                    }
+                },
+                error: function(err){
+                    console.log(err.responseJSON.message)
+                }
+            })
+        })
+
+    </script>
+</th:block>
+</html>

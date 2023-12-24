@@ -28,7 +28,7 @@ public class SkuQueryRepository {
         QBrand brand = QBrand.brand;
 
         return queryFactory
-                .select(Projections.fields(BrandDto.class,
+                .select(Projections.constructor(BrandDto.class,
                         brand.id,
                         brand.name
                         ))
@@ -112,11 +112,12 @@ public class SkuQueryRepository {
 
         return queryFactory
                 .select(Projections.constructor(SkuDto.class,
-                        brand.name, category.name, sku.price
+                        sku.id, brand.name, category.name, sku.price
                         ))
                 .from(sku)
                 .leftJoin(sku.brand, brand)
                 .leftJoin(sku.category, category)
+                .orderBy(sku.updateDate.desc())
                 .fetch();
     }
 }

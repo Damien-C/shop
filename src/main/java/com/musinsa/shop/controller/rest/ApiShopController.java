@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -35,6 +36,12 @@ public class ApiShopController {
     @GetMapping("/lowestAndHighestPriceItems")
     public ApiDataResponse<ShopResponse> getLowestAndHighestPriceItems(@RequestParam String categoryName){
         return ApiDataResponse.of(shopService.getLowestAndHighestPriceItems(categoryName));
+    }
+
+    // (추가) 전체 상품 조회
+    @GetMapping("/allItems")
+    public ApiDataResponse<List<SkuDto>> getAllItems(){
+        return ApiDataResponse.of(shopService.getAllSkuItems());
     }
 
 

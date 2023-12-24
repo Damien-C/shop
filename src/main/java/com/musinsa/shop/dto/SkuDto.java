@@ -10,13 +10,14 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class SkuDto {
+    private String id;          // 아이디
     private String brand;       // 브랜드 값
     private String category;    // 카테고리 값
     private BigDecimal price;   // 가격 값
-    public SkuDto(String brand, String category, BigDecimal price){
-        this.brand = brand;
-        this.category = category;
-        this.price = price;
+
+    public SkuDto(String id){
+        this.id = id;
     }
 }

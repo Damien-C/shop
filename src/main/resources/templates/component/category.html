@@ -1,0 +1,132 @@
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-secutiry">
+<th:block th:fragment="category">
+    <ul id="item_list">
+        <li>
+            <input id="new_item" value="" placeholder="새로운 카테고리명"/>
+            <button onclick="addItem()" class="big_button">추가</button>
+        </li>
+        <th:block th:each="item,i : ${categoryList}">
+            <li>
+                <input th:id="${item.name}" type="text" th:value="${item.name}" placeholder="카테고리명" />
+                <button th:data-name="${item.name}" onclick="updateItem(this)">수정</button>
+                <button th:data-name="${item.name}" onclick="deleteItem(this)">삭제</button>
+            </li>
+        </th:block>
+    </ul>
+    <script>
+
+        function addItem(){
+            const name = $('#new_item').val()
+            const payload = {
+                'categoryName': name
+            }
+            $.ajax({
+                url: '/admin/api/category',
+                type: 'post',
+                datatype: 'json',
+                data: JSON.stringify(payload),
+                contentType: 'application/json; charset=utf-8',
+                beforeSend: function(){
+                    $('.loading_box').addClass('on');
+                },
+                complete: function(){
+                    $('.loading_box').removeClass('on');
+
+                },
+                success: function(res){
+                    if(res.success){
+                        alert('저장 성공')
+                        $('#new_item').val('')
+                        $('#item_list').append(`
+                            <li>
+                                <input id="${name}" type="text" value="${name}" placeholder="카테고리명" />
+                                <button data-name="${name}" onclick="updateItem(this)">수정</button>
+                                <button data-name="${name}" onclick="deleteItem(this)">삭제</button>
+                            </li>
+                        `)
+                    }
+                    else{
+                        alert(res.message)
+                    }
+                },
+                error: function(err){
+                    alert(err.responseJSON.message)
+                }
+            })
+        }
+
+        function updateItem(element){
+            const name = element.getAttribute('data-name')
+            const newName = $('#'+name).val()
+            const payload = {
+                'categoryName': name,
+                'newName': newName
+            }
+            $.ajax({
+                url: '/admin/api/category',
+                type: 'patch',
+                datatype: 'json',
+                data: JSON.stringify(payload),
+                contentType: 'application/json; charset=utf-8',
+                beforeSend: function(){
+                    $('.loading_box').addClass('on');
+                },
+                complete: function(){
+                    $('.loading_box').removeClass('on');
+
+                },
+                success: function(res){
+                    if(res.success){
+                        alert('저장 성공')
+                        $('#'+name).siblings().map((i, e) => { e.setAttribute('data-name', newName)})
+                        $('#'+name).attr('id', newName)
+                    }
+                    else{
+                        alert(res.message)
+                    }
+                },
+                error: function(err){
+                    alert(err.responseJSON.message)
+                }
+            })
+        }
+
+        function deleteItem(element){
+            if(!confirm('카테고리에 해당하는 모든 상품이 함께 삭제됩니다. 계속 하시겠습니까?')) return
+            const name = element.getAttribute('data-name')
+            const payload = {
+                'categoryName': name
+            }
+            $.ajax({
+                url: '/admin/api/category',
+                type: 'delete',
+                datatype: 'json',
+                data: JSON.stringify(payload),
+                contentType: 'application/json; charset=utf-8',
+                beforeSend: function(){
+                    $('.loading_box').addClass('on');
+                },
+                complete: function(){
+                    $('.loading_box').removeClass('on');
+
+                },
+                success: function(res){
+                    if(res.success){
+                        alert('삭제 성공')
+                        $('#'+name).parent().remove()
+                    }
+                    else{
+                        alert(res.message)
+                    }
+                },
+                error: function(err){
+                    alert(err.responseJSON.message)
+                }
+            })
+        }
+
+    </script>
+</th:block>
+</html>

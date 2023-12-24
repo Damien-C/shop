@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -25,6 +24,8 @@ public class ShopService {
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryQueryRepository categoryQueryRepository;
+    private final BrandQueryRepository brandQueryRepository;
+
 
     /**
      * 구현 1) 카테고리 별 최저가격 브랜드와 상품 가격, 총액을 조회
@@ -168,7 +169,7 @@ public class ShopService {
 
     // 아이템 생성
     @Transactional
-    public void createSkuItem(String brandName, String categoryName, BigDecimal price) {
+    public SkuDto createSkuItem(String brandName, String categoryName, BigDecimal price) {
 
         Brand brand = brandRepository.findByName(brandName)
                 .orElseThrow(() -> new GeneralApiException(StatusCode.BRAND_NAME_NOT_FOUND));
@@ -176,19 +177,18 @@ public class ShopService {
         Category category = categoryRepository.findByName(categoryName)
                 .orElseThrow(() -> new GeneralApiException(StatusCode.CATEGORY_NAME_NOT_FOUND));
 
-        if(skuRepository.findByBrandAndCategory(brand, category).isEmpty()){
-            // 상품 저장
-            Sku sku = Sku.builder()
-                    .brand(brand)
-                    .category(category)
-                    .price(price)
-                    .build();
-            skuRepository.save(sku);
-        }
-        else throw new GeneralApiException(StatusCode.ITEM_ALREADY_EXISTS);
+        Sku sku = Sku.builder()
+                .brand(brand)
+                .category(category)
+                .price(price)
+                .build();
+        Sku newItem = skuRepository.save(sku);
+        return new SkuDto(newItem.getId());
     }
 
     // 아이템삭제
+    // 한 브랜드와 카테고리에 여러 상품이 생갈경우 사용불가능.
+    @Deprecated
     @Transactional
     public void deleteSkuItemByBrandNameAndCategory(String brandName, String categoryName){
 
@@ -203,6 +203,8 @@ public class ShopService {
     }
 
     // 아이템 가격수정
+    // 한 브랜드와 카테고리에 여러 상품이 생갈경우 사용불가능.
+    @Deprecated
     @Transactional
     public void updateSkuItemPriceByBrandNameAndCategory(String brandName, String categoryName, BigDecimal price){
         Brand brand = brandRepository.findByName(brandName)
@@ -217,8 +219,36 @@ public class ShopService {
         skuRepository.save(sku);
     }
 
+    // 아이템 전체 수정
+    @Transactional
+    public void updateSkuItemById(String id, String brandName, String categoryName, BigDecimal price){
+        Brand brand = brandRepository.findByName(brandName)
+                .orElseThrow(() -> new GeneralApiException(StatusCode.BRAND_NAME_NOT_FOUND));
+
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new GeneralApiException(StatusCode.CATEGORY_NAME_NOT_FOUND));
+
+        Sku sku = skuRepository.findById(id)
+                .orElseThrow(() -> new GeneralApiException(StatusCode.ITEM_NOT_FOUND));
+        sku.setBrand(brand);
+        sku.setCategory(category);
+        sku.setPrice(price);
+        skuRepository.save(sku);
+    }
+
+    // 아이템 삭제
+    @Transactional
+    public void deleteSkuItemById(String id){
+        skuRepository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
     public List<CategoryDto> getCategoryList() {
         return categoryQueryRepository.getCategoryList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BrandDto> getBrandList() {
+        return brandQueryRepository.getBrandList();
     }
 }

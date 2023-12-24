@@ -20,12 +20,6 @@ public class ApiShopAdminController {
 
     // 4. 운영자는 새로운 브랜드를 등록하고, 모든 브랜드의 상품을 추가, 변경, 삭제할 수 있어야 합니다.
 
-    // 전체 상품 조회
-    @GetMapping("/allItems")
-    public ApiDataResponse<List<SkuDto>> getAllItems(){
-        return ApiDataResponse.of(shopService.getAllSkuItems());
-    }
-
     // 브랜드 등록
     @PostMapping("/brand")
     public ApiDataResponse<?> createBrand(@RequestBody ShopRequest request){
@@ -69,23 +63,33 @@ public class ApiShopAdminController {
     }
 
     // 아이템 등록
+    @Deprecated
     @PostMapping("/item")
     public ApiDataResponse<?> createSkuItem(@RequestBody ShopRequest request){
-        shopService.createSkuItem(request.getBrandName(), request.getCategoryName(), request.getPrice());
+        return ApiDataResponse.of(shopService.createSkuItem(request.getBrandName(), request.getCategoryName(), request.getPrice()));
+    }
+
+    // 아이템 가격 수정
+    // 한 브랜드와 카테고리에 여러 상품이 생갈경우 사용불가능.
+    @Deprecated
+    @PatchMapping(value = "/item")
+    public ApiDataResponse<?> updateItemPriceByBrandNameAndCategory(@RequestBody ShopRequest request){
+        shopService.updateSkuItemPriceByBrandNameAndCategory(request.getBrandName(), request.getCategoryName(), request.getPrice());
+        return ApiDataResponse.ok();
+    }
+
+
+    // 아이템 전체 수정
+    @PutMapping(value = "/item")
+    public ApiDataResponse<?> updateItemById(@RequestBody ShopRequest request){
+        shopService.updateSkuItemById(request.getId(), request.getBrandName(), request.getCategoryName(), request.getPrice());
         return ApiDataResponse.ok();
     }
 
     // 아이템 삭제
     @DeleteMapping(value = "/item")
-    public ApiDataResponse<?> deleteItemByBrandNameAndCategory(@RequestBody ShopRequest request){
-        shopService.deleteSkuItemByBrandNameAndCategory(request.getBrandName(), request.getCategoryName());
-        return ApiDataResponse.ok();
-    }
-
-    // 아이템 가격 수정
-    @PatchMapping(value = "/item")
-    public ApiDataResponse<?> updateItemPriceByBrandNameAndCategory(@RequestBody ShopRequest request){
-        shopService.updateSkuItemPriceByBrandNameAndCategory(request.getBrandName(), request.getCategoryName(), request.getPrice());
+    public ApiDataResponse<?> deleteItemById(@RequestBody ShopRequest request){
+        shopService.deleteSkuItemById(request.getId());
         return ApiDataResponse.ok();
     }
 

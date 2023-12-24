@@ -1,0 +1,57 @@
+.top_wrap {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top_wrap > div > button {
+  margin-right: 10px;
+}
+.top_wrap > div > select {
+  margin-left: 1vw;
+}
+.top_wrap .select_wrap {
+  display: flex;
+  align-items: center;
+}
+
+.content_wrap {
+  height: calc(100% - 50px);
+  overflow-y: scroll;
+  margin-top: 50px;
+}
+.content_wrap > .instruction {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+.content_wrap .select_wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.content_wrap .select_wrap > select, .content_wrap .select_wrap > input {
+  margin-right: 10px;
+  text-align: center;
+}
+.content_wrap ul > li {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.content_wrap ul > li > span {
+  width: 180px;
+  text-align: center;
+  margin-right: 10px;
+}
+.content_wrap ul > li > select, .content_wrap ul > li > input {
+  margin-right: 10px;
+  text-align: center;
+}
+.big_button {
+  width: 122px;
+}
+
+/*# sourceMappingURL=admin.css.map */

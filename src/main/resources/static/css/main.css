@@ -1,5 +1,48 @@
-.main_wrap {
+.top_wrap {
+  width: 100%;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top_wrap > div > button {
+  margin-right: 10px;
+}
+.top_wrap > div > select {
+  margin-left: 1vw;
+}
+.top_wrap > .select_wrap {
+  display: flex;
+  align-items: center;
+}
+
+.content_wrap {
+  height: calc(100% - 50px);
+  overflow-y: scroll;
+  margin-top: 50px;
+}
+.content_wrap > .instruction {
+  width: 100%;
+  text-align: center;
+}
+.content_wrap > ul > li {
+  margin-bottom: 20px;
+  display: flex;
+}
+.content_wrap > ul > li > label, .content_wrap > ul > li > span {
+  flex: 1;
+  overflow: hidden;
+}
+.content_wrap > ul > li > label {
+  text-align: center;
+}
+.content_wrap > .total_price {
+  text-align: center;
+  margin-top: 40px;
+}
+.content_wrap > .select_name {
+  text-align: center;
+  margin-bottom: 40px;
+  margin-top: 40px;
 }
 
 /*# sourceMappingURL=main.css.map */

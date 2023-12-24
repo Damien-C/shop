@@ -14,7 +14,7 @@
     }
 
   }
-  & > .select_wrap{
+  .select_wrap{
     display: flex;
     align-items: center;
   }
@@ -26,27 +26,39 @@
   & > .instruction{
     width: 100%;
     text-align: center;
+    margin-bottom: 30px;
   }
-  & > ul{
+  .select_wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    & > select, & > input{
+      margin-right: 10px;
+      text-align: center;
+    }
+  }
+  ul{
     & > li{
       margin-bottom: 20px;
       display: flex;
-      & > label, & > span{
-        flex: 1;
-        overflow: hidden;
-      }
-      & > label{
+      align-items: center;
+      justify-content: center;
+      & > span{
+        width: 180px;
         text-align: center;
+        margin-right: 10px;
+      }
+      & > select, & > input{
+        margin-right: 10px;
+        text-align: center;
+      }
+      & > button{
+
       }
     }
   }
-  & > .total_price{
-    text-align: center;
-    margin-top: 40px;
-  }
-  & > .select_name{
-    text-align: center;
-    margin-bottom: 40px;
-    margin-top: 40px;
-  }
+}
+.big_button{
+  width:122px;
 }

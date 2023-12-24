@@ -4,13 +4,32 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <title> test</title>
+    <title>무신사</title>
+    <script src="/static/plugin/jquery-3.6.0.min.js"></script>
+    <link href="/static/css/common.css" rel="stylesheet"/>
+    <link href="/static/css/loading.css" rel="stylesheet"/>
+    <link rel="icon" href="/static/image/favicon_152.ico">
 </head>
 <body>
+<th:block th:insert="component/loading.html::loading"></th:block>
+<div class="head">
+    <div class="left_container">
+        MUSINSA
+    </div>
+    <div class="right_container">
+        <th:block th:if="${#strings.startsWith(servletPath, '/admin')}">
+            <button id="btn_admin" onclick="window.location='/'">메인</button>
+        </th:block>
+        <th:block th:unless="${#strings.startsWith(servletPath, '/admin')}">
+            <button id="btn_main" onclick="window.location='/admin'">관리자</button>
+        </th:block>
+    </div>
+</div>
 <div class="body">
     <section class="section">
         <th:block layout:fragment="content"/>
     </section>
 </div>
+<script src="/static/js/common.js"></script>
 </body>
 </html>

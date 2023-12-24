@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class ShopRequest{
+    private String id;
     private String brandName;
     private String categoryName;
     private BigDecimal price;
-
     private String newName;
 }

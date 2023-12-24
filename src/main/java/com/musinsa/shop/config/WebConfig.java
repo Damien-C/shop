@@ -10,5 +10,5 @@ import java.util.List;
 
 @Configuration
 @EnableSpringDataWebSupport
-public class WebConfig {
+public class WebConfig{
 }

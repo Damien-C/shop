@@ -2,6 +2,7 @@ package com.musinsa.shop.domain;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
  * 해당 엔티티는 추상 클래스로서, 모든 엔티티에서 기본적으로 사용되는 필드들을 구성하여 필요한 엔티티는 이를 상속하여 사용한다.
  */
 @MappedSuperclass
+@Getter
 @EntityListeners(AuditingEntityListener.class) // createDate, updateDate 를 자동으로 기록.
 public abstract class BaseEntity {
 

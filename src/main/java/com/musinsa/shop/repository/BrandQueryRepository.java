@@ -13,21 +13,23 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.musinsa.shop.domain.QCategory.category;
+
 @RequiredArgsConstructor
 @Repository
-public class CategoryQueryRepository {
+public class BrandQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public List<CategoryDto> getCategoryList() {
+    public List<BrandDto> getBrandList() {
 
-        QCategory category = QCategory.category;
+        QBrand brand = QBrand.brand;
 
         return queryFactory
-                .select(Projections.constructor(CategoryDto.class,
-                        category.id, category.name
+                .select(Projections.constructor(BrandDto.class,
+                        brand.id, brand.name
                 ))
-                .from(category)
+                .from(brand)
                 .fetch();
 
     }
