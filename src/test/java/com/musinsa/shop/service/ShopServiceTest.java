@@ -32,11 +32,8 @@ class ShopServiceTest {
     private ShopService sut;
 
     @Mock private BrandRepository brandRepository;
-    @Mock private BrandQueryRepository brandQueryRepository;
     @Mock private CategoryRepository categoryRepository;
-    @Mock private CategoryQueryRepository categoryQueryRepository;
     @Mock private SkuRepository skuRepository;
-    @Mock private SkuQueryRepository skuQueryRepository;
 
 
     @DisplayName("조회된 아이템 리스트를 응답객체에 저장하고 아이템 리스트를 순회하여 가격 합산")
@@ -63,9 +60,9 @@ class ShopServiceTest {
     void getLowestPriceBrandItemsTest() {
         // Given
         BrandDto brand = new BrandDto("1", "A");
-        given(skuQueryRepository.getLowestTotalPriceBrand())
+        given(skuRepository.getLowestTotalPriceBrand())
                 .willReturn(brand);
-        given(skuQueryRepository.getItemsByBrandId(brand.getId()))
+        given(skuRepository.getItemsByBrandId(brand.getId()))
                 .willReturn(List.of(
                         createSkuDto("1", "A", "상의", "10000"),
                         createSkuDto("1", "A", "하의", "20000")
@@ -78,8 +75,8 @@ class ShopServiceTest {
         assertEquals(result.getLowestPrice().getBrand(), "A");
         assertEquals(result.getLowestPrice().getCategory().size(), 2);
         assertEquals(new BigDecimal("30000"), result.getLowestPrice().getTotalPrice());
-        then(skuQueryRepository).should().getLowestTotalPriceBrand();
-        then(skuQueryRepository).should().getItemsByBrandId(brand.getId());
+        then(skuRepository).should().getLowestTotalPriceBrand();
+        then(skuRepository).should().getItemsByBrandId(brand.getId());
     }
 
     @DisplayName("조회된 두개의 아이템들을 각각 리스트로 응답객체에 저장하고 검색값을 그대로 응답객체에 저장")
@@ -89,9 +86,9 @@ class ShopServiceTest {
         String categoryName = "상의";
         SkuDto lowestSku = createSkuDto("1", "A", "상의", "10000");
         SkuDto highestSku = createSkuDto("2", "B", "상의", "20000");
-        given(skuQueryRepository.getLowestPriceItemByCategoryName(categoryName))
+        given(skuRepository.getLowestPriceItemByCategoryName(categoryName))
                 .willReturn(lowestSku);
-        given(skuQueryRepository.getHighestPriceItemByCategoryName(categoryName))
+        given(skuRepository.getHighestPriceItemByCategoryName(categoryName))
                 .willReturn(highestSku);
 
         // When
@@ -101,8 +98,8 @@ class ShopServiceTest {
         assertEquals(result.getLowestPriceList().get(0), lowestSku);
         assertEquals(result.getHighestPriceList().get(0), highestSku);
         assertEquals(result.getCategory(), categoryName);
-        then(skuQueryRepository).should().getLowestPriceItemByCategoryName(categoryName);
-        then(skuQueryRepository).should().getHighestPriceItemByCategoryName(categoryName);
+        then(skuRepository).should().getLowestPriceItemByCategoryName(categoryName);
+        then(skuRepository).should().getHighestPriceItemByCategoryName(categoryName);
     }
 
     @DisplayName("조회된 아이템 리스트를 그대로 리턴")
@@ -111,14 +108,14 @@ class ShopServiceTest {
         // Given
         SkuDto sku1 = createSkuDto("1", "A", "상의", "10000");
         SkuDto sku2 = createSkuDto("2", "B", "상의", "20000");
-        given(skuQueryRepository.getAllItems())
+        given(skuRepository.getAllItems())
                 .willReturn(List.of(sku1, sku2));
         // When
         List<SkuDto> result = sut.getAllSkuItems();
 
         // Then
         assertEquals(result.size(), 2);
-        then(skuQueryRepository).should().getAllItems();
+        then(skuRepository).should().getAllItems();
     }
 
     @DisplayName("브랜드 이름을 매개변수로 새로운 브랜드 생성")
@@ -541,7 +538,7 @@ class ShopServiceTest {
                 new CategoryDto("Category1"),
                 new CategoryDto("Category2")
         );
-        given(categoryQueryRepository.getCategoryList()).willReturn(categoryList);
+        given(categoryRepository.getCategoryList()).willReturn(categoryList);
 
         // When
         List<CategoryDto> result = sut.getCategoryList();
@@ -560,7 +557,7 @@ class ShopServiceTest {
                 new BrandDto("1", "Brand1"),
                 new BrandDto("2", "Brand2")
         );
-        given(brandQueryRepository.getBrandList()).willReturn(brandList);
+        given(brandRepository.getBrandList()).willReturn(brandList);
 
         // When
         List<BrandDto> result = sut.getBrandList();

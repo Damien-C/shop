@@ -1,24 +1,19 @@
-package com.musinsa.shop.repository;
+package com.musinsa.shop.repository.querydsl;
 
 import com.musinsa.shop.domain.QBrand;
 import com.musinsa.shop.domain.QCategory;
-import com.musinsa.shop.domain.QSku;
 import com.musinsa.shop.dto.BrandDto;
 import com.musinsa.shop.dto.CategoryDto;
-import com.musinsa.shop.dto.SkuDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@Repository
-public class CategoryQueryRepository {
+public class CategoryQueryRepositoryImpl implements CategoryQueryRepository{
 
     private final JPAQueryFactory queryFactory;
-
     public List<CategoryDto> getCategoryList() {
 
         QCategory category = QCategory.category;

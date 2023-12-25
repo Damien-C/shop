@@ -20,11 +20,8 @@ import java.util.List;
 public class ShopService {
 
     private final SkuRepository skuRepository;
-    private final SkuQueryRepository skuQueryRepository;
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
-    private final CategoryQueryRepository categoryQueryRepository;
-    private final BrandQueryRepository brandQueryRepository;
 
 
     /**
@@ -58,10 +55,10 @@ public class ShopService {
     public ShopResponse getLowestPriceBrandItems(){
 
         // 각 카테고리 가격의 합이 최저인 브랜드 조회 맟 저장
-        BrandDto brand = skuQueryRepository.getLowestTotalPriceBrand();
+        BrandDto brand = skuRepository.getLowestTotalPriceBrand();
 
         // 브랜드 아이디에 해당하는 상품리스트 조회 및 저장
-        List<SkuDto> skuList = skuQueryRepository.getItemsByBrandId(brand.getId());
+        List<SkuDto> skuList = skuRepository.getItemsByBrandId(brand.getId());
 
         // 총액 계산
         BigDecimal totalPrice = skuList.stream()
@@ -90,8 +87,8 @@ public class ShopService {
     public ShopResponse getLowestAndHighestPriceItems(String categoryName){
 
         // 최저가 및 최고가 브랜드와 가격 조회
-        SkuDto lowestSku = skuQueryRepository.getLowestPriceItemByCategoryName(categoryName);
-        SkuDto highestSku = skuQueryRepository.getHighestPriceItemByCategoryName(categoryName);
+        SkuDto lowestSku = skuRepository.getLowestPriceItemByCategoryName(categoryName);
+        SkuDto highestSku = skuRepository.getHighestPriceItemByCategoryName(categoryName);
 
         // 응답 객체 생성 및 결과 설정 후 리턴
         return ShopResponse.builder()
@@ -107,7 +104,7 @@ public class ShopService {
     // 전체조회
     @Transactional(readOnly = true)
     public List<SkuDto> getAllSkuItems(){
-        return skuQueryRepository.getAllItems();
+        return skuRepository.getAllItems();
     }
 
     // 브랜드 생성
@@ -244,11 +241,11 @@ public class ShopService {
 
     @Transactional(readOnly = true)
     public List<CategoryDto> getCategoryList() {
-        return categoryQueryRepository.getCategoryList();
+        return categoryRepository.getCategoryList();
     }
 
     @Transactional(readOnly = true)
     public List<BrandDto> getBrandList() {
-        return brandQueryRepository.getBrandList();
+        return brandRepository.getBrandList();
     }
 }

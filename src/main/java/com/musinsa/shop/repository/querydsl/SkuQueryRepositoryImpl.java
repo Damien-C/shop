@@ -1,4 +1,4 @@
-package com.musinsa.shop.repository;
+package com.musinsa.shop.repository.querydsl;
 
 import com.musinsa.shop.domain.QBrand;
 import com.musinsa.shop.domain.QCategory;
@@ -8,16 +8,13 @@ import com.musinsa.shop.dto.SkuDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@Repository
-public class SkuQueryRepository {
+public class SkuQueryRepositoryImpl implements SkuQueryRepository{
 
     private final JPAQueryFactory queryFactory;
-
     /**
      * Sku 에서 각 카테고리 가격의 합이 최저인 브랜드 조회.
      * @return BrandDto 브랜드 아이디, 브랜드명 포함
@@ -31,7 +28,7 @@ public class SkuQueryRepository {
                 .select(Projections.constructor(BrandDto.class,
                         brand.id,
                         brand.name
-                        ))
+                ))
                 .from(sku)
                 .innerJoin(sku.brand, brand)
                 .groupBy(sku.brand.id)
@@ -113,7 +110,7 @@ public class SkuQueryRepository {
         return queryFactory
                 .select(Projections.constructor(SkuDto.class,
                         sku.id, brand.name, category.name, sku.price
-                        ))
+                ))
                 .from(sku)
                 .leftJoin(sku.brand, brand)
                 .leftJoin(sku.category, category)

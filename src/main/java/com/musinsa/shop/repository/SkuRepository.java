@@ -4,6 +4,7 @@ import com.musinsa.shop.domain.Brand;
 import com.musinsa.shop.domain.Category;
 import com.musinsa.shop.domain.Sku;
 import com.musinsa.shop.dto.SkuViewInterface;
+import com.musinsa.shop.repository.querydsl.SkuQueryRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SkuRepository extends JpaRepository<Sku, String>{
+public interface SkuRepository extends JpaRepository<Sku, String>, SkuQueryRepository {
 
     // TODO: QueryDSL 로 여러 쿼리로 분할하여 구현하는 방법 고민해보기
     /**
