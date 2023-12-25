@@ -9,4 +9,8 @@ import lombok.Getter;
 public class CategoryDto {
     private String id;
     private String name;
+
+    public CategoryDto(String name){
+        this.name = name;
+    }
 }
