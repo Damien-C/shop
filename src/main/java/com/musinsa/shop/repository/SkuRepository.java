@@ -23,25 +23,17 @@ public interface SkuRepository extends JpaRepository<Sku, String>, SkuQueryRepos
      *
      * @return List<SkuViewInterface>
      */
-    @Query(value = "SELECT *\n" +
-            "FROM (\n" +
-            "    SELECT\n" +
-            "        sku.category_id,\n" +
-            "        brand.name AS brand,\n" +
-            "        category.name AS category,\n" +
-            "        sku.price,\n" +
-            "        ROW_NUMBER() OVER (PARTITION BY sku.category_id ORDER BY sku.price ASC) as rn\n" +
-            "    FROM\n" +
-            "        sku \n" +
-            "    JOIN\n" +
-            "        brand ON sku.brand_id = brand.id \n" +
-            "    JOIN\n" +
-            "        category ON sku.category_id = category.id \n" +
-            ") AS sub\n" +
-            "WHERE\n" +
-            "    sub.rn = 1\n" +
-            "ORDER BY\n" +
-            "    sub.category_id;", nativeQuery = true)
+    @Query(value = "SELECT brand.name, category.name, sku.price FROM sku \n" +
+            "INNER JOIN brand ON brand.id = sku.brand_id\n" +
+            "INNER JOIN category ON category.id = sku.category_id\n" +
+            "WHERE sku.id IN (\n" +
+            "\tSELECT MAX(s.id) FROM sku s\n" +
+            "\tINNER JOIN (\n" +
+            "\t\tSELECT category_id, MIN(price) AS min_price \n" +
+            "\t\tFROM sku \n" +
+            "\t\tGROUP BY category_id) AS c \n" +
+            "\tON s.category_id = c.category_id AND s.price = c.min_price\n" +
+            "\tGROUP BY c.category_id) order by category.id;", nativeQuery = true)
     List<SkuViewInterface> getLowestPriceItems();
 
     Optional<Sku> findByBrandAndCategory(Brand brand, Category category);
