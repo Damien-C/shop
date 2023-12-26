@@ -21,8 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
-
-
     @ExceptionHandler(GeneralApiException.class)
     public ResponseEntity<Object> handleMusinsaApiException(GeneralApiException e, WebRequest request) {
         log.info("errorCode : {}, url: {}, message: {}", e.getErrorCode(), request, e.getDetailErrorMessage());
@@ -52,9 +50,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     @Nullable
     protected ResponseEntity<Object> handleExceptionInternal(Exception e, @Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-        StatusCode errorCode = statusCode.is4xxClientError() ?
-                StatusCode.CLIENT_ERROR :
-                StatusCode.INTERNAL_ERROR;
+        StatusCode errorCode = statusCode.is4xxClientError() ? StatusCode.CLIENT_ERROR : StatusCode.INTERNAL_ERROR;
 
         log.info("########## : {}, {}", e.getMessage(), e.getLocalizedMessage());
         return super.handleExceptionInternal(

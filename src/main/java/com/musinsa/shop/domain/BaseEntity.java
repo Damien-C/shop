@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @MappedSuperclass
 @Getter
+@Setter
 @EntityListeners(AuditingEntityListener.class) // createDate, updateDate 를 자동으로 기록.
 public abstract class BaseEntity {
 

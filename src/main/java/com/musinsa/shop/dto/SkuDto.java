@@ -20,4 +20,5 @@ public class SkuDto {
     public SkuDto(String id){
         this.id = id;
     }
+
 }

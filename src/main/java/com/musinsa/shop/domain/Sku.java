@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 public class Sku extends BaseEntity{
 
     // SKU 의 가격, 최대 1억원까지 저장할 수 있고 원(KRW) 단위는 소수점이 없기때문에 scale 은 0으로 저장한다.
-    @Column(precision = 9, scale = 0)
+    @Column(precision = 9)
     protected BigDecimal price;
 
     // 하나의 브랜드는 N개의 SKU 를 갖는다.

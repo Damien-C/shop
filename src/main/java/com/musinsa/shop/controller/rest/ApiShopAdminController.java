@@ -2,14 +2,10 @@ package com.musinsa.shop.controller.rest;
 
 import com.musinsa.shop.dto.ApiDataResponse;
 import com.musinsa.shop.dto.ShopRequest;
-import com.musinsa.shop.dto.SkuDto;
 import com.musinsa.shop.service.ShopService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -63,7 +59,6 @@ public class ApiShopAdminController {
     }
 
     // 아이템 등록
-    @Deprecated
     @PostMapping("/item")
     public ApiDataResponse<?> createSkuItem(@RequestBody ShopRequest request){
         return ApiDataResponse.of(shopService.createSkuItem(request.getBrandName(), request.getCategoryName(), request.getPrice()));

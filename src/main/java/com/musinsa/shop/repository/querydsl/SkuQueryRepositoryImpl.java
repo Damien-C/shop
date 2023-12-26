@@ -109,8 +109,7 @@ public class SkuQueryRepositoryImpl implements SkuQueryRepository{
 
         return queryFactory
                 .select(Projections.constructor(SkuDto.class,
-                        sku.id, brand.name, category.name, sku.price
-                ))
+                        sku.id, brand.name, category.name, sku.price))
                 .from(sku)
                 .leftJoin(sku.brand, brand)
                 .leftJoin(sku.category, category)

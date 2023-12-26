@@ -1,9 +1,7 @@
 package com.musinsa.shop.controller.view;
 
-import com.musinsa.shop.dto.BrandDto;
 import com.musinsa.shop.dto.CategoryDto;
 import com.musinsa.shop.service.ShopService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

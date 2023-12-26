@@ -85,16 +85,19 @@ public class ShopService {
      */
     @Transactional(readOnly = true)
     public ShopResponse getLowestAndHighestPriceItems(String categoryName){
+        // 카테고리 이름 검증
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new GeneralApiException(StatusCode.CATEGORY_NAME_NOT_FOUND));
 
         // 최저가 및 최고가 브랜드와 가격 조회
-        SkuDto lowestSku = skuRepository.getLowestPriceItemByCategoryName(categoryName);
-        SkuDto highestSku = skuRepository.getHighestPriceItemByCategoryName(categoryName);
+        SkuDto lowestSku = skuRepository.getLowestPriceItemByCategoryName(category.getName());
+        SkuDto highestSku = skuRepository.getHighestPriceItemByCategoryName(category.getName());
 
         // 응답 객체 생성 및 결과 설정 후 리턴
         return ShopResponse.builder()
                 .lowestPriceList(Collections.singletonList(lowestSku))
                 .highestPriceList(Collections.singletonList(highestSku))
-                .category(categoryName)
+                .category(category.getName())
                 .build();
     }
 
@@ -236,7 +239,9 @@ public class ShopService {
     // 아이템 삭제
     @Transactional
     public void deleteSkuItemById(String id){
-        skuRepository.deleteById(id);
+        Sku sku = skuRepository.findById(id)
+                .orElseThrow(() -> new GeneralApiException(StatusCode.ITEM_NOT_FOUND));
+        skuRepository.deleteById(sku.getId());
     }
 
     @Transactional(readOnly = true)

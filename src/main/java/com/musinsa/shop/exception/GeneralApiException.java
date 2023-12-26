@@ -14,9 +14,4 @@ public class GeneralApiException extends RuntimeException {
         this.detailErrorMessage = "";
     }
 
-    public GeneralApiException(StatusCode errorCode, String detailMessage) {
-        super(errorCode.getDescription());
-        this.errorCode = errorCode;
-        this.detailErrorMessage = detailMessage;
-    }
 }
