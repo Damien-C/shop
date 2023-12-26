@@ -79,27 +79,38 @@ class ShopServiceTest {
         then(skuRepository).should().getItemsByBrandId(brand.getId());
     }
 
-    @DisplayName("조회된 두개의 아이템들을 각각 리스트로 응답객체에 저장하고 검색값을 그대로 응답객체에 저장")
     @Test
-    void getLowestAndHighestPriceItemsTest() {
+    @DisplayName("카테고리 별 최저가 및 최고가 아이템 조회")
+    void getLowestAndHighestPriceItemsSuccessTest() {
         // Given
         String categoryName = "상의";
-        SkuDto lowestSku = createSkuDto("1", "A", "상의", "10000");
-        SkuDto highestSku = createSkuDto("2", "B", "상의", "20000");
-        given(skuRepository.getLowestPriceItemByCategoryName(categoryName))
-                .willReturn(lowestSku);
-        given(skuRepository.getHighestPriceItemByCategoryName(categoryName))
-                .willReturn(highestSku);
+        SkuDto lowestSku = new SkuDto("1", "BrandA", "상의", new BigDecimal("10000"));
+        SkuDto highestSku = new SkuDto("2", "BrandB", "상의", new BigDecimal("20000"));
+        Category mockCategory = new Category(categoryName);
+
+        given(categoryRepository.findByName(categoryName)).willReturn(Optional.of(mockCategory));
+        given(skuRepository.getLowestPriceItemByCategoryName(categoryName)).willReturn(lowestSku);
+        given(skuRepository.getHighestPriceItemByCategoryName(categoryName)).willReturn(highestSku);
 
         // When
         ShopResponse result = sut.getLowestAndHighestPriceItems(categoryName);
 
         // Then
-        assertEquals(result.getLowestPriceList().get(0), lowestSku);
-        assertEquals(result.getHighestPriceList().get(0), highestSku);
-        assertEquals(result.getCategory(), categoryName);
-        then(skuRepository).should().getLowestPriceItemByCategoryName(categoryName);
-        then(skuRepository).should().getHighestPriceItemByCategoryName(categoryName);
+        assertEquals(lowestSku, result.getLowestPriceList().get(0));
+        assertEquals(highestSku, result.getHighestPriceList().get(0));
+        assertEquals(categoryName, result.getCategory());
+    }
+
+    @Test
+    @DisplayName("카테고리 이름이 존재하지 않을 경우 예외 발생")
+    void getLowestAndHighestPriceItemsCategoryNotFoundTest() {
+        // Given
+        String nonExistingCategoryName = "없는카테고리";
+        given(categoryRepository.findByName(nonExistingCategoryName)).willReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(GeneralApiException.class, () -> sut.getLowestAndHighestPriceItems(nonExistingCategoryName));
+        then(categoryRepository).should().findByName(nonExistingCategoryName);
     }
 
     @DisplayName("조회된 아이템 리스트를 그대로 리턴")
@@ -140,9 +151,7 @@ class ShopServiceTest {
         given(brandRepository.findByName(existingBrandName)).willReturn(Optional.of(new Brand(existingBrandName)));
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.createBrand(existingBrandName);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.createBrand(existingBrandName));
     }
 
     @DisplayName("브랜드 삭제시 이름이 존재하지 않을경우 예외처리")
@@ -153,9 +162,7 @@ class ShopServiceTest {
         given(brandRepository.findByName(nonExistingBrandName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.deleteBrand(nonExistingBrandName);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.deleteBrand(nonExistingBrandName));
     }
 
     @DisplayName("브랜드 이름을 매개변수로 브랜드 삭제")
@@ -181,9 +188,7 @@ class ShopServiceTest {
         given(brandRepository.findByName(nonExistingBrandName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.updateBrandName(nonExistingBrandName, "NewName");
-        });
+        assertThrows(GeneralApiException.class, () -> sut.updateBrandName(nonExistingBrandName, "NewName"));
     }
 
     @DisplayName("브랜드 이름을 매개변수로 브랜드 이름 수정")
@@ -224,9 +229,7 @@ class ShopServiceTest {
         given(categoryRepository.findByName(existingCategoryName)).willReturn(Optional.of(new Category(existingCategoryName)));
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.createCategory(existingCategoryName);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.createCategory(existingCategoryName));
     }
 
     @DisplayName("카테고리 삭제시 이름이 존재하지 않을 경우 예외처리")
@@ -237,9 +240,7 @@ class ShopServiceTest {
         given(categoryRepository.findByName(nonExistingCategoryName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.deleteCategory(nonExistingCategoryName);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.deleteCategory(nonExistingCategoryName));
     }
 
     @DisplayName("카테고리 이름을 매개변수로 카테고리 삭제")
@@ -265,9 +266,7 @@ class ShopServiceTest {
         given(categoryRepository.findByName(nonExistingCategoryName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.updateCategoryName(nonExistingCategoryName, "NewName");
-        });
+        assertThrows(GeneralApiException.class, () -> sut.updateCategoryName(nonExistingCategoryName, "NewName"));
     }
 
     @DisplayName("카테고리 이름을 매개변수로 카테고리 이름 수정")
@@ -317,9 +316,7 @@ class ShopServiceTest {
         given(brandRepository.findByName(brandName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.createSkuItem(brandName, categoryName, price);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.createSkuItem(brandName, categoryName, price));
     }
 
     @DisplayName("카테고리가 존재하지 않을 때 아이템 생성 실패")
@@ -334,9 +331,7 @@ class ShopServiceTest {
         given(categoryRepository.findByName(categoryName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.createSkuItem(brandName, categoryName, price);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.createSkuItem(brandName, categoryName, price));
     }
 
     @DisplayName("브랜드와 카테고리가 존재할 때 아이템 삭제")
@@ -366,9 +361,7 @@ class ShopServiceTest {
         given(brandRepository.findByName(nonExistingBrandName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.deleteSkuItemByBrandNameAndCategory(nonExistingBrandName, categoryName);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.deleteSkuItemByBrandNameAndCategory(nonExistingBrandName, categoryName));
     }
 
     @DisplayName("카테고리가 존재하지 않을 때 아이템 삭제 실패")
@@ -382,9 +375,7 @@ class ShopServiceTest {
         given(categoryRepository.findByName(nonExistingCategoryName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.deleteSkuItemByBrandNameAndCategory(brandName, nonExistingCategoryName);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.deleteSkuItemByBrandNameAndCategory(brandName, nonExistingCategoryName));
     }
 
     @DisplayName("브랜드가 존재하지 않을 때 아이템 가격 수정 실패")
@@ -397,9 +388,7 @@ class ShopServiceTest {
         given(brandRepository.findByName(nonExistingBrandName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.updateSkuItemPriceByBrandNameAndCategory(nonExistingBrandName, categoryName, newPrice);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.updateSkuItemPriceByBrandNameAndCategory(nonExistingBrandName, categoryName, newPrice));
     }
 
     @DisplayName("카테고리가 존재하지 않을 때 아이템 가격 수정 실패")
@@ -414,9 +403,7 @@ class ShopServiceTest {
         given(categoryRepository.findByName(nonExistingCategoryName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.updateSkuItemPriceByBrandNameAndCategory(brandName, nonExistingCategoryName, newPrice);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.updateSkuItemPriceByBrandNameAndCategory(brandName, nonExistingCategoryName, newPrice));
     }
 
     @DisplayName("해당 브랜드와 카테고리에 아이템이 존재하지 않을 때 실패")
@@ -433,9 +420,7 @@ class ShopServiceTest {
         given(skuRepository.findByBrandAndCategory(brand, category)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.updateSkuItemPriceByBrandNameAndCategory(brandName, categoryName, newPrice);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.updateSkuItemPriceByBrandNameAndCategory(brandName, categoryName, newPrice));
     }
 
     @DisplayName("브랜드가 존재하지 않을 때 아이템 업데이트 실패")
@@ -449,9 +434,7 @@ class ShopServiceTest {
         given(brandRepository.findByName(nonExistingBrandName)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(GeneralApiException.class, () -> {
-            sut.updateSkuItemById(id, nonExistingBrandName, categoryName, price);
-        });
+        assertThrows(GeneralApiException.class, () -> sut.updateSkuItemById(id, nonExistingBrandName, categoryName, price));
     }
 
     @DisplayName("카테고리가 존재하지 않을 때 아이템 업데이트 실패")
@@ -517,17 +500,36 @@ class ShopServiceTest {
         then(skuRepository).should().save(sku);
     }
 
-    @DisplayName("아이템 ID로 삭제")
     @Test
-    public void deleteSkuItemByIdTest() {
+    @DisplayName("아이템 삭제 성공 시나리오")
+    void deleteSkuItemByIdSuccessTest() {
         // Given
-        String id = "skuId";
+        String skuId = "123";
+        Sku mockSku = new Sku();
+        mockSku.setId(skuId);
+        given(skuRepository.findById(skuId)).willReturn(Optional.of(mockSku));
 
         // When
-        sut.deleteSkuItemById(id);
+        sut.deleteSkuItemById(skuId);
 
         // Then
-        then(skuRepository).should().deleteById(id);
+        then(skuRepository).should().deleteById(skuId);
+    }
+
+    @Test
+    @DisplayName("아이템 삭제 실패 - 아이템을 찾을 수 없음")
+    void deleteSkuItemByIdNotFoundTest() {
+        // Given
+        String nonExistingId = "NonExistingId";
+        given(skuRepository.findById(nonExistingId)).willReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(GeneralApiException.class, () -> {
+            sut.deleteSkuItemById(nonExistingId);
+        });
+
+        then(skuRepository).should().findById(nonExistingId);
+        then(skuRepository).should(never()).deleteById(any());
     }
 
     @DisplayName("카테고리 리스트 조회")
