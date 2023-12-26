@@ -5,11 +5,9 @@
 ### Frontend : 모든 기능 및 필요 화면
 
 ## 빌드 및 실행 방법 IDE (IntelliJ 2023.3.1 Ultimate Edition)
-#### 1. Project Structure SDK Corretto 17.0.4 설정
-![Screenshot 2023-12-26 at 3.13.15 PM.png](..%2F..%2F..%2FDesktop%2FScreenshot%202023-12-26%20at%203.13.15%E2%80%AFPM.png)
-#### 2. Edit Configuration > Spring Boot > Build and run 
-#### java corretto-17 설정, -cp shop.main 선택, 메인 클래스 com.musinsa.shop.ShopApplication 로 설정 후 Run  
-![Screenshot 2023-12-26 at 3.17.24 PM.png](..%2F..%2F..%2FDesktop%2FScreenshot%202023-12-26%20at%203.17.24%E2%80%AFPM.png)
+#### 1. Project Structure > SDK > Java Corretto 17.0.4 로 설정 (해당 버전이 없을 경우 다운로드 필요)
+#### 2. Edit Configuration > Spring Boot > Build and run > 
+#### java corretto-17 설정, -cp shop.main 선택, 메인 클래스 com.musinsa.shop.ShopApplication 로 설정 후 Run
 
 ## 테스트 실행 방법
 #### 주의사항: 프로젝트를 재실행 할 때마다 테스트 데이터 자동 초기화 실행
